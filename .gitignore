@@ -7,3 +7,5 @@ venv
 
 .DS_Store
 /.mypy_cache/
+
+db.sqlite3
