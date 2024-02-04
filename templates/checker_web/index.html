@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск номера телефона</title>
+    <link rel="stylesheet" href="{% static 'checker_web/css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Получить информацию по номеру телефона</h2>
+        <input type="tel" id="phoneInput" placeholder="Введите номер телефона" required>
+        <p class="search-help-text">Формат: 7XXXXXXXXXX</p>
+        <button class="search-button" onclick="checkPhone()">Найти</button>
+        <div id="result"></div>
+    </div>
+
+    <script src="{% static 'checker_web/js/script.js' %}"></script>
+</body>
+</html>
