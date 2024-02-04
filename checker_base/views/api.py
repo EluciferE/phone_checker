@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework.decorators import api_view
 
+from checker_base.models import PhoneGroup
 from checker_base.views.utils import api_error_response, api_ok_response, assert_valid_serializer
 
 
@@ -29,8 +30,21 @@ def get_phone_info(request):
     except serializers.ValidationError as error:
         return api_error_response(error.detail)
 
+    phone = data['phone']
+    prefix = int(phone[1:4])
+    number = int(phone[4:])
+
+    phone_group = PhoneGroup.objects.filter(
+        prefix=prefix,
+        start_range__lte=number,
+        end_range__gte=number,
+    ).select_related('region', 'operator').first()
+
+    if phone_group is None:
+        return api_error_response({'phone': ['Номер не найден в базе данных']})
+
     return api_ok_response({
-        'phone': data['phone'],
-        'operator': 'МТС',
-        'region': 'Тюмень',
+        'phone': phone,
+        'operator': phone_group.operator.name,
+        'region': phone_group.region.name,
     })
