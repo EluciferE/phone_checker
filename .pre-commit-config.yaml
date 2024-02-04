@@ -46,3 +46,4 @@ repos:
   hooks:
   - id: mypy
     exclude: ^(data|\w+/migrations)/
+    additional_dependencies: ['types-requests']
