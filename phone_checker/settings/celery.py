@@ -6,5 +6,5 @@ CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://localho
 CELERY_IMPORTS = ('checker_base.tasks.sync_phones',)
 
 CELERY_BEAT_SCHEDULE = {
-    'sync_phone_numbers': {'task': 'checker_base.tasks.sync_phone_numbers', 'schedule': timedelta(hours=24)},
+    'sync_phone_numbers': {'task': 'checker_base.tasks.sync_phone_numbers', 'schedule': timedelta(minutes=10)},
 }

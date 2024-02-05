@@ -6,6 +6,8 @@ venv
 /log
 
 logs/*
+/logs/celery/*
+/logs/django/*
 !/logs/celery/
 !/logs/django/
 !/logs/celery/.gitkeep

@@ -1,0 +1,53 @@
+version: '3.1'
+
+services:
+  phone_checker_db:
+    container_name: phone_checker_db
+    image: postgres
+    restart: always
+    env_file:
+      - '.env'
+    ports:
+      - "5432:5432"
+
+  phone_checker_backend:
+    container_name: phone_checker_backend
+    image: phone_checker_backend
+    restart: always
+    build:
+        context: .
+        dockerfile: Dockerfile
+    command: ["gunicorn", "--bind", "0.0.0.0:80", "phone_checker.wsgi:application"]
+    env_file:
+      - '.env'
+    volumes:
+      - ./logs/django:/app/logs
+    environment:
+      - TZ=Europe/Moscow
+    depends_on:
+      - redis
+      - phone_checker_db
+    ports:
+      - "80:80"
+
+  redis:
+      image: redis:latest
+      restart: always
+      ports:
+        - "6379:6379"
+      env_file:
+        - '.env'
+        
+  celery_beat:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    command: celery -A phone_checker beat -l info
+    volumes:
+      - ./logs/celery/:/app/logs
+    env_file:
+      - '.env'
+    depends_on:
+      - redis
+      - phone_checker_db
+  
