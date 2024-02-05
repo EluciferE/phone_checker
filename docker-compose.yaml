@@ -42,7 +42,22 @@ services:
     build:
         context: .
         dockerfile: Dockerfile
+    restart: always
     command: celery -A phone_checker beat -l info
+    volumes:
+      - ./logs/celery/:/app/logs
+    env_file:
+      - '.env'
+    depends_on:
+      - redis
+      - phone_checker_db
+
+  celery_worker:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    restart: always
+    command: celery -A phone_checker worker -l info
     volumes:
       - ./logs/celery/:/app/logs
     env_file:

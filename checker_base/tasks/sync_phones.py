@@ -128,7 +128,7 @@ def check_listed_phones(dataframe: pd.DataFrame):
 
 def rename_df_columns(dataframe: pd.DataFrame):
     columns = [
-        'prefix', 'amount', 'start', 'end', 'operator_name',
+        'prefix', 'start', 'end', 'amount', 'operator_name',
         'region_name', 'operator_inn',
     ]
     dataframe.columns = columns
