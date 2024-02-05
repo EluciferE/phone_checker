@@ -8,7 +8,7 @@ from celery import shared_task
 
 from checker_base.models import Operator, PhoneGroup, Region
 
-sync_phones_logger = logging.getLogger('sync_phones')
+logger = logging.getLogger('celery')
 
 
 class PhoneRow(typing.TypedDict):
@@ -34,8 +34,8 @@ def remove_empty_operators_and_regions():
     unused_operators = Operator.objects.exclude(id__in=used_operator_ids)
     unused_regions = Region.objects.exclude(id__in=used_region_ids)
 
-    sync_phones_logger.info(f'Delete unused operators: {unused_operators.count()}')
-    sync_phones_logger.info(f'Delete unused regions: {unused_regions.count()}')
+    logger.info(f'Delete unused operators: {unused_operators.count()}')
+    logger.info(f'Delete unused regions: {unused_regions.count()}')
 
     unused_operators.delete()
     unused_regions.delete()
@@ -66,7 +66,7 @@ def check_unlisted_phones(dataframe: pd.DataFrame, first_digit: int):
             phone_group.delete()
             deleted_count += 1
 
-    sync_phones_logger.info(f'Deleted unlisted phones: {deleted_count}, {first_digit = }')
+    logger.info(f'Deleted unlisted phones: {deleted_count}, {first_digit = }')
 
 
 def update_phone_group(phone_group: PhoneGroup, phone_row: PhoneRow):
@@ -123,7 +123,7 @@ def check_listed_phones(dataframe: pd.DataFrame):
             create_phone_group(phone_row)
             created_count += 1
 
-    sync_phones_logger.info(f'Created phones: {created_count}')
+    logger.info(f'Created phones: {created_count}')
 
 
 def rename_df_columns(dataframe: pd.DataFrame):
@@ -140,7 +140,7 @@ def rename_df_columns(dataframe: pd.DataFrame):
     max_retries=5,
 )
 def sync_single_file(url: str, first_digit: int):
-    sync_phones_logger.info(f'Sync with {url!r}')
+    logger.info(f'Sync with {url!r}')
 
     response = requests.get(url, verify=False)
     df = pd.read_csv(BytesIO(response.content), sep=';')
@@ -152,7 +152,7 @@ def sync_single_file(url: str, first_digit: int):
 
 @shared_task
 def sync_phone_numbers():
-    sync_phones_logger.info('Start to sync phone numbers')
+    logger.info('Start to sync phone numbers')
     urls = {
         3: 'https://opendata.digital.gov.ru/downloads/ABC-3xx.csv',
         4: 'https://opendata.digital.gov.ru/downloads/ABC-4xx.csv',
@@ -164,4 +164,4 @@ def sync_phone_numbers():
 
     remove_empty_operators_and_regions()
 
-    sync_phones_logger.info('End sync phone numbers')
+    logger.info('End sync phone numbers')

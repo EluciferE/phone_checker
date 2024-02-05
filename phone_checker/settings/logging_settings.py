@@ -1,4 +1,5 @@
 import logging
+import logging.config
 import os
 from datetime import time
 from pathlib import Path
@@ -13,15 +14,14 @@ LOGGING_CONF = dict(
     version=1,
     disable_existing_loggers=False,
     formatters={
-        'f': {
-            'format':
-                '%(asctime)s %(name)s:%(lineno)5s %(levelname)s:%(message)s',
+        'main_formatter': {
+            'format': '%(asctime)s %(name)s:%(lineno)5s %(levelname)s:%(message)s',
         },
     },
     handlers={
-        'h': {
+        'file_handler': {
             'level': logging.INFO,
-            'formatter': 'f',
+            'formatter': 'main_formatter',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': LOGGING_PATH,
             'when': 'midnight',
@@ -32,7 +32,7 @@ LOGGING_CONF = dict(
     },
     loggers={
         None: {
-            'handlers': ['h'],
+            'handlers': ['file_handler'],
             'level': logging.INFO,
         },
     },
@@ -41,3 +41,5 @@ LOGGING_CONF = dict(
 
 if not os.path.exists(LOGGING_DIR):
     os.makedirs(LOGGING_DIR)
+
+logging.config.dictConfig(LOGGING_CONF)
