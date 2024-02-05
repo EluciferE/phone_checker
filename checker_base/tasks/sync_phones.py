@@ -110,6 +110,7 @@ def check_listed_phones(dataframe: pd.DataFrame):
 
     for index, row in dataframe.iterrows():
         phone_row: PhoneRow = typing.cast(PhoneRow, dict(row))
+        phone_row['region_name'] = phone_row['region_name'].replace('|', ', ')
 
         phone_group = PhoneGroup.objects.filter(
             prefix=phone_row['prefix'],
