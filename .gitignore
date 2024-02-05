@@ -4,6 +4,7 @@ __pycache__
 venv
 .env
 /log
+/logs
 
 .DS_Store
 /.mypy_cache/

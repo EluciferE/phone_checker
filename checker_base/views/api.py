@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework import serializers
 from rest_framework.decorators import api_view
 
@@ -25,9 +27,12 @@ class PhoneInfoResponseSerializer(serializers.Serializer):
 
 @api_view(['GET'])
 def get_phone_info(request):
+    logger = logging.getLogger('get_phone_info')
     try:
         data = assert_valid_serializer(request, PhoneInfoRequestSerializer)
+        logger.info(f'Received a phone request: {data}')
     except serializers.ValidationError as error:
+        logger.info(f'Error while handling phone. {request.query_params = }, {error.detail}')
         return api_error_response(error.detail)
 
     phone = data['phone']
