@@ -118,11 +118,15 @@ def check_listed_phones(dataframe: pd.DataFrame):
             end_range=phone_row['end'],
         ).select_related('operator', 'region').first()
 
-        if phone_group is not None:
-            update_phone_group(phone_group, phone_row)
-        else:
-            create_phone_group(phone_row)
-            created_count += 1
+        try:
+            if phone_group is not None:
+                update_phone_group(phone_group, phone_row)
+            else:
+                create_phone_group(phone_row)
+                created_count += 1
+        except (ValueError, ) as error:
+            # Value error caused by NaN operator_inn in csv
+            logger.error(f"Error while updating phone_group: {error}") 
 
     logger.info(f'Created phones: {created_count}')
 
@@ -158,7 +162,7 @@ def sync_phone_numbers():
         3: 'https://opendata.digital.gov.ru/downloads/ABC-3xx.csv',
         4: 'https://opendata.digital.gov.ru/downloads/ABC-4xx.csv',
         8: 'https://opendata.digital.gov.ru/downloads/ABC-8xx.csv',
-        9: 'https://opendata.digital.gov.ru/downloads/ABC-9xx.csv',
+        9: 'https://opendata.digital.gov.ru/downloads/DEF-9xx.csv',
     }
     for first_digit, url in urls.items():
         sync_single_file(url, first_digit)
