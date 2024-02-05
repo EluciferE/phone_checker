@@ -1,6 +1,6 @@
 # Phone Checker
 
-![Phone Checker](https://i.ibb.co/HpQPkM8/Screenshot-1.png)
+![Phone Checker](https://i.ibb.co/1nkHxv0/Screenshot-2.png)
 ### <code>[Check demo](http://194.87.99.80/)</code>
 
 Проект Phone Checker предоставляет возможность получить информацию по номеру телефона через веб-интерфейс. Реализован на Django, DRF, Celery, с использованием PostgreSQL в качестве базы данных, Redis для хранения очередей задач. Для управления контейнерами используется Docker и Docker Compose.
