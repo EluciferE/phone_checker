@@ -77,7 +77,7 @@ def update_phone_group(phone_group: PhoneGroup, phone_row: PhoneRow):
             int(phone_group.operator.inn) != phone_row['operator_inn']:
         phone_group.operator = Operator.objects.create(
             name=phone_row['operator_name'],
-            inn=phone_row['operator_inn'],
+            inn=str(int(phone_row['operator_inn'])),
         )
 
     if phone_group.region.name != phone_row['region_name']:
@@ -89,7 +89,7 @@ def update_phone_group(phone_group: PhoneGroup, phone_row: PhoneRow):
 def create_phone_group(phone_row: PhoneRow):
     operator = Operator.objects.get_or_create(
         name=phone_row['operator_name'],
-        inn=str(phone_row['operator_inn']),
+        inn=str(int(phone_row['operator_inn'])),
     )[0]
 
     region = Region.objects.get_or_create(
