@@ -4,7 +4,12 @@ __pycache__
 venv
 .env
 /log
-/logs
+
+logs/*
+!/logs/celery/
+!/logs/django/
+!/logs/celery/.gitkeep
+!/logs/django/.gitkeep
 
 .DS_Store
 /.mypy_cache/
