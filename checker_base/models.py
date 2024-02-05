@@ -2,14 +2,14 @@ from django.db import models
 
 
 class Region(models.Model):
-    name = models.CharField(max_length=255, help_text='Название региона')
+    name = models.CharField(max_length=511, help_text='Название региона')
 
     def __str__(self):
         return self.name
 
 
 class Operator(models.Model):
-    name = models.CharField(max_length=255, help_text='Название оператора')
+    name = models.CharField(max_length=511, help_text='Название оператора')
     inn = models.CharField(help_text='ИНН оператора')
 
     def __str__(self):
