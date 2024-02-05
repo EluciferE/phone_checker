@@ -72,5 +72,8 @@ class SyncPhonesTest(TestCase):
         )
 
         sync_single_file(url='test_url', first_digit=9)
+        remove_empty_operators_and_regions()
 
         self.assertRaises(models.ObjectDoesNotExist, phone_group.refresh_from_db)
+        self.assertRaises(models.ObjectDoesNotExist, operator.refresh_from_db)
+        self.assertRaises(models.ObjectDoesNotExist, region.refresh_from_db)
