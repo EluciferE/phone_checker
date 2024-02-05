@@ -26,6 +26,9 @@ def remove_empty_operators_and_regions():
     """
     used_ids = PhoneGroup.objects.values_list('operator__id', 'region__id').distinct()
 
+    if not used_ids.exists():
+        return
+
     used_operator_ids, used_region_ids = zip(*used_ids)
 
     unused_operators = Operator.objects.exclude(id__in=used_operator_ids)
@@ -71,8 +74,7 @@ def update_phone_group(phone_group: PhoneGroup, phone_row: PhoneRow):
     Обновляем информацию об операторе / регионе телефонной группы
     """
     if phone_group.operator.name != phone_row['operator_name'] or \
-            phone_group.operator.inn != phone_row['operator_inn']:
-
+            int(phone_group.operator.inn) != phone_row['operator_inn']:
         phone_group.operator = Operator.objects.create(
             name=phone_row['operator_name'],
             inn=phone_row['operator_inn'],
@@ -85,17 +87,21 @@ def update_phone_group(phone_group: PhoneGroup, phone_row: PhoneRow):
 
 
 def create_phone_group(phone_row: PhoneRow):
+    operator = Operator.objects.get_or_create(
+        name=phone_row['operator_name'],
+        inn=str(phone_row['operator_inn']),
+    )[0]
+
+    region = Region.objects.get_or_create(
+        name=phone_row['region_name'],
+    )[0]
+
     PhoneGroup.objects.create(
         prefix=phone_row['prefix'],
         start_range=phone_row['start'],
         end_range=phone_row['end'],
-        operator=Operator.objects.get_or_create(
-            name=phone_row['operator_name'],
-            inn=phone_row['operator_inn'],
-        )[0],
-        region=Region.objects.get_or_create(
-            name=phone_row['region_name'],
-        )[0],
+        operator=operator,
+        region=region,
     )
 
 
@@ -107,8 +113,8 @@ def check_listed_phones(dataframe: pd.DataFrame):
 
         phone_group = PhoneGroup.objects.filter(
             prefix=phone_row['prefix'],
-            start_range__lte=phone_row['start'],
-            end_range__gte=phone_row['end'],
+            start_range=phone_row['start'],
+            end_range=phone_row['end'],
         ).select_related('operator', 'region').first()
 
         if phone_group is not None:
@@ -121,16 +127,11 @@ def check_listed_phones(dataframe: pd.DataFrame):
 
 
 def rename_df_columns(dataframe: pd.DataFrame):
-    map_columns = {
-        'АВС/ DEF': 'prefix',
-        'От': 'start',
-        'До': 'end',
-        'Оператор': 'operator_name',
-        'Регион': 'region_name',
-        'ИНН': 'operator_inn',
-    }
-
-    dataframe.rename(map_columns)
+    columns = [
+        'prefix', 'amount', 'start', 'end', 'operator_name',
+        'region_name', 'operator_inn',
+    ]
+    dataframe.columns = columns
 
 
 @shared_task(

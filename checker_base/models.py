@@ -10,7 +10,7 @@ class Region(models.Model):
 
 class Operator(models.Model):
     name = models.CharField(max_length=255, help_text='Название оператора')
-    inn = models.IntegerField(help_text='ИНН оператора')
+    inn = models.CharField(help_text='ИНН оператора')
 
     def __str__(self):
         return f'{self.name} ({self.inn})'
